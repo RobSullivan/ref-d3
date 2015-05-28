@@ -63,8 +63,19 @@ d3.json("http://localhost:8000/data.json", function(error, root) {
       .attr("dy", 3)
       .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
       .text(function(d) { return d.pmid; });
+
+  var clickety = function(){
+   return alert("cliked") 
+  }
+  d3.select('circle').on("click", clickety )
+
+
 });
 
 d3.select(self.frameElement).style("height", height + "px");
+
+
+
+
 
 </script>
