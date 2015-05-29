@@ -1,28 +1,22 @@
-var width = 960,
-    height = 2200;
+var diameter = 960;
 
-var cluster = d3.layout.cluster()
-    .size([height, width - 160]);
+var tree = d3.layout.tree()
+    .size([360, diameter / 2 - 120])
+    .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
 
-var diagonal = d3.svg.diagonal()
-    .projection(function(d) { return [d.y, d.x]; });
+var diagonal = d3.svg.diagonal.radial()
+    .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
 
 var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("width", diameter)
+    .attr("height", diameter - 150)
   .append("g")
-    .attr("transform", "translate(40,0)");
+    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
-//for inspecting in the console
-var global_nodes,
-    global_links
+d3.json("data.json", function(error, root) {
+  var nodes = tree.nodes(root),
+      links = tree.links(nodes);
 
-d3.json("http://localhost:8000/data.json", function(error, root) {
-  //root is json data
-  var nodes = cluster.nodes(root),
-      links = cluster.links(nodes);
-    global_nodes = nodes
-    global_links = links
   var link = svg.selectAll(".link")
       .data(links)
     .enter().append("path")
@@ -33,26 +27,16 @@ d3.json("http://localhost:8000/data.json", function(error, root) {
       .data(nodes)
     .enter().append("g")
       .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
 
   node.append("circle")
       .attr("r", 4.5);
 
   node.append("text")
-      .attr("dx", function(d) { return d.children ? -8 : 8; })
-      .attr("dy", 3)
-      .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+      .attr("dy", ".31em")
+      .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
       .text(function(d) { return d.pmid; });
-
-
-
-
-  var clickety = function(){
-   return alert("cliked") 
-  }
-  d3.select('circle').on("click", clickety )
-
-
 });
 
-d3.select(self.frameElement).style("height", height + "px");
+d3.select(self.frameElement).style("height", diameter - 150 + "px");
