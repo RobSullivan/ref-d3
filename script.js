@@ -13,11 +13,16 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(40,0)");
 
+//for inspecting in the console
+var global_nodes,
+    global_links
+
 d3.json("http://localhost:8000/data.json", function(error, root) {
-  //root is the json object
+  //root is json data
   var nodes = cluster.nodes(root),
       links = cluster.links(nodes);
-
+    global_nodes = nodes
+    global_links = links
   var link = svg.selectAll(".link")
       .data(links)
     .enter().append("path")
@@ -38,6 +43,7 @@ d3.json("http://localhost:8000/data.json", function(error, root) {
       .attr("dy", 3)
       .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
       .text(function(d) { return d.pmid; });
+
 
 
 
