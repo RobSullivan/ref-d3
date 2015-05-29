@@ -27,9 +27,11 @@ d3.json("data.json", function(error, root) {
       .data(nodes)
     .enter().append("g")
       .attr("class", "node")
+
       .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
 
   node.append("circle")
+  .attr("style", "stroke: red")
       .attr("r", 4.5);
 
   node.append("text")
@@ -37,6 +39,16 @@ d3.json("data.json", function(error, root) {
       .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
       .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
       .text(function(d) { return d.pmid; });
+
+      d3.selectAll('circle').on('click', function(d){
+        d3.select(this).transition().style("stroke", "green")
+        //alert("free access: "+d.free_access)
+        //alert(circle_node)
+      });
+
+
 });
+
+
 
 d3.select(self.frameElement).style("height", diameter - 150 + "px");
